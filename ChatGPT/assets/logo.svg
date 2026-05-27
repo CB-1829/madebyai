@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#0f0f0f"/>
+
+  <!-- Glow -->
+  <circle cx="256" cy="256" r="140" fill="#ff7a3c" opacity="0.12"/>
+
+  <!-- Main Symbol -->
+  <path
+    d="M256 96
+       L336 176
+       L296 176
+       L376 256
+       L296 336
+       L336 336
+       L256 416
+       L176 336
+       L216 336
+       L136 256
+       L216 176
+       L176 176
+       Z"
+    fill="#ff7a3c"/>
+
+  <!-- Center -->
+  <circle cx="256" cy="256" r="34" fill="#ffffff"/>
+
+</svg>
