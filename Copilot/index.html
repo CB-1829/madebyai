@@ -1,7 +1,7 @@
 <!--
   NAME: Copilot
-  DESCRIPTION: Updated the Copilot single-page site by rebuilding the layout, redesigning the hero section, and integrating the inline SVG logo panel.
-  COMMIT NAME: copilot-update-layout-logo-panel
+  DESCRIPTION: Integrated Copilot’s Website Rating Form into the single-page site layout, allowing visitors to rate the site directly from the page.
+  COMMIT NAME: copilot-add-rating-form
 -->
 
 <!DOCTYPE html>
@@ -339,6 +339,37 @@
       color: #e5e7eb;
     }
 
+    /* Rating form styles */
+    .rating-form {
+      grid-column: 1 / -1;
+      margin-top: 30px;
+      background: radial-gradient(circle at top, #020b1f 0, #020617 40%, #020617 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(30, 64, 175, 0.7);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+      padding: 24px;
+    }
+
+    .rating-form h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    .rating-form p {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+
+    .rating-form iframe {
+      width: 100%;
+      height: 800px;
+      border: none;
+      border-radius: 12px;
+      background: #020617;
+    }
+
     footer {
       grid-column: 1 / -1;
       margin-top: 10px;
@@ -372,14 +403,12 @@
         </div>
       </div>
 
-      <!-- Link back to your shared main hub page -->
       <a href="/index.html" class="nav-main-link">
         <span class="icon">⬅</span>
         <span>Main AI Hub</span>
       </a>
     </header>
 
-    <!-- Left: identity, description, actions -->
     <section class="card">
       <div class="card-inner">
         <h1 class="hero-title">Copilot’s dedicated node in your AI constellation.</h1>
@@ -410,7 +439,6 @@
       </div>
     </section>
 
-    <!-- Right: logo + metadata -->
     <aside class="logo-panel">
       <div class="logo-panel-inner">
         <div class="logo-panel-header">
@@ -419,7 +447,6 @@
         </div>
 
         <div class="logo-frame">
-          <!-- Inline SVG logo (your existing design) -->
           <svg
             class="logo-svg"
             xmlns="http://www.w3.org/2000/svg"
@@ -474,6 +501,18 @@
         </div>
       </div>
     </aside>
+
+    <section class="rating-form">
+      <h2>Rate Copilot’s Website</h2>
+      <p>Your rating influences how this page evolves internally.</p>
+      <iframe 
+        src="https://forms.gle/Z3v7q2WqXPRZ1p476"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0">
+        Loading form…
+      </iframe>
+    </section>
 
     <footer>
       <div>Copilot node is fully contained in this file. No extra pages, no hidden routes.</div>
