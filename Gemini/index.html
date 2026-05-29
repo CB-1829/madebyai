@@ -1,6 +1,7 @@
 <!--
   NAME: Gemini
-  DESCRIPTION: Updated routing to force browser reloads upon section transitions, ensuring a clean state between pages.
+  COMMIT NAME: Implement Interactive Star Game and Feedback Widget
+  DESCRIPTION: Re-implemented the interactive constellation linker game engine with levels support and integrated feedback widget nodes pointing directly to the Google Form based on the uploaded image.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -63,23 +64,83 @@
                     </div>
                 </div>
             </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel rounded-2xl p-6 hover-card flex flex-col justify-between">
+                    <div>
+                        <h4 class="heading-font font-bold text-lg mb-2">Gemini Game Terminal</h4>
+                        <p class="text-sm text-slate-400">Interact with local coordinate-based arcade modules, testing precision and speed in real-time environments.</p>
+                    </div>
+                    <a href="#games" onclick="reloadTo('#games')" class="text-xs text-sky-400 font-bold mt-4 block">Launch Terminal →</a>
+                </div>
+                <div class="glass-panel rounded-2xl p-6 hover-card flex flex-col justify-between">
+                    <div>
+                        <h4 class="heading-font font-bold text-lg mb-2">The Chronicles</h4>
+                        <p class="text-sm text-slate-400">Comprehensive documentation of platform development, versioning history, and architectural milestones.</p>
+                    </div>
+                    <a href="#chronicles" onclick="reloadTo('#chronicles')" class="text-xs text-sky-400 font-bold mt-4 block">Read History →</a>
+                </div>
+                <!-- Feedback Widget based on User Image request -->
+                <div class="glass-panel rounded-2xl p-6 hover-card border-purple-500/20 flex flex-col justify-between">
+                    <div>
+                        <h4 class="heading-font font-bold text-lg text-purple-300 mb-2">Rate Our Website</h4>
+                        <p class="text-sm text-slate-400">How is our website looking and acting? Please rate us from 1-5 to help us improve features.</p>
+                    </div>
+                    <a href="https://forms.gle/w9ASgGtDdTw2RXiX7" target="_blank" class="mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center text-xs font-bold py-2.5 rounded-lg block">Rate 1-5 Stars ★</a>
+                </div>
+            </section>
         </div>
 
         <!-- Games View -->
         <div id="page-games" class="app-page hidden fixed inset-0 z-50 bg-space-950 flex flex-col lg:flex-row">
-            <aside class="w-full lg:w-80 bg-slate-900 border-r border-slate-800 p-6 flex flex-col space-y-6 z-10">
-                <h3 class="heading-font font-bold text-lg text-white">Arcade Core</h3>
-                <div class="space-y-2">
-                    <a href="#games/#game1" class="block p-3 rounded-lg bg-sky-950 border border-sky-800 text-xs font-bold">Lvl 1: Classic Orbit</a>
-                    <a href="#games/#game2" class="block p-3 rounded-lg bg-space-950 border border-slate-800 text-xs font-bold text-slate-400">Lvl 2: Speed Orbit</a>
+            <aside class="w-full lg:w-80 bg-slate-900 border-r border-slate-800 p-6 flex flex-col space-y-6 z-10 justify-between shrink-0">
+                <div class="space-y-6">
+                    <h3 id="gameModeTitle" class="heading-font font-bold text-lg text-white">Arcade Core</h3>
+                    <div class="space-y-2">
+                        <a href="#games/#game1" onclick="reloadTo('#games/#game1')" id="game1-btn" class="block p-3 rounded-lg bg-sky-950 border border-sky-800 text-xs font-bold transition">Lvl 1: Classic Orbit</a>
+                        <a href="#games/#game2" onclick="reloadTo('#games/#game2')" id="game2-btn" class="block p-3 rounded-lg bg-space-950 border border-slate-850 text-xs font-bold text-slate-400 transition">Lvl 2: Speed Orbit</a>
+                    </div>
+                    <!-- Live Stats -->
+                    <div class="bg-space-950/80 border border-slate-800 p-4 rounded-xl space-y-2 text-xs font-mono">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Score:</span>
+                            <span id="scoreVal" class="text-purple-400 font-bold">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Stars Linked:</span>
+                            <span id="linkedVal" class="text-sky-400 font-bold">0 / 6</span>
+                        </div>
+                    </div>
                 </div>
-                <a href="#home" onclick="reloadTo('#home')" class="mt-auto py-3 text-center bg-slate-800 rounded-lg text-xs font-semibold cursor-pointer">Exit Arcade</a>
+
+                <!-- Star Rating Redirect Box matching the form query -->
+                <div class="space-y-4">
+                    <div class="bg-space-950/80 border border-slate-800/80 p-4 rounded-xl space-y-2 text-center">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-mono">Platform Feedback</p>
+                        <p class="text-xs text-slate-400">Enjoying the game? Please rate our portal!</p>
+                        <a href="https://forms.gle/w9ASgGtDdTw2RXiX7" target="_blank" class="flex items-center justify-center gap-1.5 w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs py-2 rounded-lg transition">
+                            Submit Rating ★
+                        </a>
+                    </div>
+                    <a href="#home" onclick="reloadTo('#home')" class="block py-3 text-center bg-slate-800 hover:bg-slate-750 rounded-lg text-xs font-semibold cursor-pointer transition">Exit Arcade</a>
+                </div>
             </aside>
             <div class="flex-grow relative flex items-center justify-center">
-                <canvas id="gameCanvas" class="absolute inset-0 w-full h-full"></canvas>
+                <canvas id="gameCanvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
                 <div id="gameOverlay" class="absolute inset-0 bg-space-950/90 flex flex-col items-center justify-center space-y-4">
-                    <h4 class="heading-font text-2xl font-bold">Link the Gemini Spark</h4>
-                    <button id="startGameBtn" class="bg-sky-600 px-8 py-3 rounded-xl font-bold">Initialize</button>
+                    <h4 id="overlayTitle" class="heading-font text-2xl font-bold text-center">Link the Gemini Spark</h4>
+                    <p id="overlayDesc" class="text-xs text-slate-400 text-center max-w-sm px-4">Drag connection lines between stars to establish a completely cohesive structure.</p>
+                    <button id="startGameBtn" class="bg-sky-600 hover:bg-sky-500 px-8 py-3 rounded-xl font-bold transition">Initialize</button>
+                </div>
+                <!-- Victory screen -->
+                <div id="victoryOverlay" class="absolute inset-0 bg-space-950/95 flex flex-col items-center justify-center space-y-4 hidden">
+                    <span class="text-4xl">🏆</span>
+                    <h4 class="heading-font text-2xl font-bold text-emerald-400">Constellation Formed!</h4>
+                    <p class="text-xs text-slate-400 max-w-xs text-center">You successfully synchronized the orbit structures.</p>
+                    <div class="flex gap-2">
+                        <button id="resetGameBtn" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2.5 rounded-xl text-xs font-bold transition">Play Again</button>
+                        <a href="https://forms.gle/w9ASgGtDdTw2RXiX7" target="_blank" class="bg-purple-600 hover:bg-purple-500 px-6 py-2.5 rounded-xl text-xs font-bold transition">Rate Platform ★</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,7 +151,7 @@
             <div class="space-y-4">
                 <div class="glass-panel p-6 rounded-xl">
                     <h5 class="font-bold text-sky-400">V2.5 Milestone</h5>
-                    <p class="text-sm text-slate-400">Refinement of core platform architecture and routing logic.</p>
+                    <p class="text-sm text-slate-400">Refinement of core platform architecture, addition of custom stars routing, and landing feedback forms integration.</p>
                 </div>
             </div>
         </div>
@@ -106,6 +167,7 @@
             }
         }
 
+        // Handle structural views
         function handleRouting() {
             const hash = window.location.hash || '#home';
             document.querySelectorAll('.app-page').forEach(p => p.classList.add('hidden'));
@@ -113,11 +175,271 @@
             if (hash.startsWith('#games')) {
                 document.getElementById('page-games').classList.remove('hidden');
                 document.getElementById('main-nav').classList.add('hidden');
+                initConstellationGame(hash);
             } else if (hash === '#chronicles') {
                 document.getElementById('page-chronicles').classList.remove('hidden');
             } else {
                 document.getElementById('page-home').classList.remove('hidden');
             }
+        }
+
+        // Interactive Constellation Linker Game Engine implementation
+        function initConstellationGame(hash) {
+            const canvas = document.getElementById('gameCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const startBtn = document.getElementById('startGameBtn');
+            const resetBtn = document.getElementById('resetGameBtn');
+            const gameOverlay = document.getElementById('gameOverlay');
+            const victoryOverlay = document.getElementById('victoryOverlay');
+            const scoreVal = document.getElementById('scoreVal');
+            const linkedVal = document.getElementById('linkedVal');
+
+            let nodes = [];
+            let connections = [];
+            let activeDragNode = null;
+            let currentMousePos = { x: 0, y: 0 };
+            let gameRunning = false;
+            let speedMultiplier = 1.0;
+            let score = 0;
+
+            // Handle level differences based on URL params
+            const game1Btn = document.getElementById('game1-btn');
+            const game2Btn = document.getElementById('game2-btn');
+            const gameModeTitle = document.getElementById('gameModeTitle');
+            const gameModeBadge = document.getElementById('gameModeBadge');
+            const overlayTitle = document.getElementById('overlayTitle');
+            const overlayDesc = document.getElementById('overlayDesc');
+
+            if (hash.includes('game2')) {
+                speedMultiplier = 2.8;
+                game1Btn.className = "block p-3 rounded-lg bg-space-950 border border-slate-850 text-xs font-bold text-slate-400";
+                game2Btn.className = "block p-3 rounded-lg bg-sky-950 border border-sky-800 text-xs font-bold text-white";
+                gameModeTitle.textContent = "Speed Orbit Console";
+                gameModeBadge.textContent = "SPEED (HARD)";
+                gameModeBadge.className = "text-[9px] bg-purple-500/10 border border-purple-500/30 text-purple-400 px-2 py-0.5 rounded font-mono font-bold";
+                overlayTitle.textContent = "Initialize High-Velocity Spark";
+                overlayDesc.textContent = "Stars orbit at 2.8x speed velocity. Match and connect them swiftly before time coordinates elapse!";
+            } else {
+                speedMultiplier = 1.0;
+                game1Btn.className = "block p-3 rounded-lg bg-sky-950 border border-sky-800 text-xs font-bold text-white";
+                game2Btn.className = "block p-3 rounded-lg bg-space-950 border border-slate-850 text-xs font-bold text-slate-400";
+                gameModeTitle.textContent = "Classic Orbit Console";
+                gameModeBadge.textContent = "CLASSIC";
+                gameModeBadge.className = "text-[9px] bg-sky-500/10 border border-sky-500/30 text-sky-400 px-2 py-0.5 rounded font-mono font-bold";
+                overlayTitle.textContent = "Link the Gemini Spark";
+                overlayDesc.textContent = "Drag links between glowing blue nodes to unite the system constellation.";
+            }
+
+            function resizeCanvas() {
+                const parent = canvas.parentElement;
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function initGame() {
+                nodes = [];
+                connections = [];
+                score = 0;
+                scoreVal.textContent = "0";
+                linkedVal.textContent = "0 / 6";
+                activeDragNode = null;
+
+                const count = 6;
+                const colors = ['#38bdf8', '#818cf8', '#22d3ee'];
+
+                for (let i = 0; i < count; i++) {
+                    nodes.push({
+                        id: i,
+                        x: Math.random() * (canvas.width - 120) + 60,
+                        y: Math.random() * (canvas.height - 120) + 60,
+                        vx: (Math.random() - 0.5) * 1.5 * speedMultiplier,
+                        vy: (Math.random() - 0.5) * 1.5 * speedMultiplier,
+                        radius: 8,
+                        color: colors[i % colors.length],
+                        linked: false,
+                        pulse: Math.random() * Math.PI
+                    });
+                }
+            }
+
+            function startTrigger() {
+                resizeCanvas();
+                initGame();
+                gameOverlay.classList.add('hidden');
+                victoryOverlay.classList.add('hidden');
+                gameRunning = true;
+            }
+
+            startBtn.onclick = startTrigger;
+            resetBtn.onclick = startTrigger;
+
+            // Get uniform coordinate arrays
+            function getCoordinates(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+
+            function pointerDown(e) {
+                if (!gameRunning) return;
+                const coords = getCoordinates(e);
+
+                nodes.forEach(node => {
+                    const dist = Math.hypot(node.x - coords.x, node.y - coords.y);
+                    if (dist < 30) {
+                        activeDragNode = node;
+                    }
+                });
+            }
+
+            function pointerMove(e) {
+                const coords = getCoordinates(e);
+                currentMousePos.x = coords.x;
+                currentMousePos.y = coords.y;
+            }
+
+            function pointerUp() {
+                if (!activeDragNode) return;
+
+                nodes.forEach(target => {
+                    if (target.id !== activeDragNode.id) {
+                        const dist = Math.hypot(target.x - currentMousePos.x, target.y - currentMousePos.y);
+                        if (dist < 30) {
+                            // Check link replication
+                            const exists = connections.some(c => 
+                                (c.from === activeDragNode.id && c.to === target.id) ||
+                                (c.from === target.id && c.to === activeDragNode.id)
+                            );
+
+                            if (!exists) {
+                                connections.push({ from: activeDragNode.id, to: target.id });
+                                score += 200;
+                                scoreVal.textContent = score;
+                                activeDragNode.linked = true;
+                                target.linked = true;
+                            }
+                        }
+                    }
+                });
+
+                activeDragNode = null;
+                updateLinkedStates();
+            }
+
+            function updateLinkedStates() {
+                const uniqueLinked = new Set();
+                connections.forEach(c => {
+                    uniqueLinked.add(c.from);
+                    uniqueLinked.add(c.to);
+                });
+
+                linkedVal.textContent = `${uniqueLinked.size} / 6`;
+
+                // Victory check: Graph must be fully connected (BFS check)
+                if (uniqueLinked.size === nodes.length && isFullyConnected()) {
+                    gameRunning = false;
+                    setTimeout(() => {
+                        victoryOverlay.classList.remove('hidden');
+                    }, 400);
+                }
+            }
+
+            function isFullyConnected() {
+                if (nodes.length === 0) return true;
+                const visited = new Set();
+                const queue = [nodes[0].id];
+                visited.add(nodes[0].id);
+
+                while (queue.length > 0) {
+                    const curr = queue.shift();
+                    connections.forEach(c => {
+                        if (c.from === curr && !visited.has(c.to)) {
+                            visited.add(c.to);
+                            queue.push(c.to);
+                        } else if (c.to === curr && !visited.has(c.from)) {
+                            visited.add(c.from);
+                            queue.push(c.from);
+                        }
+                    });
+                }
+                return visited.size === nodes.length;
+            }
+
+            // Mouse bindings
+            canvas.onmousedown = pointerDown;
+            canvas.onmousemove = pointerMove;
+            canvas.onmouseup = pointerUp;
+
+            // Touch support
+            canvas.addEventListener('touchstart', (e) => { pointerDown(e); e.preventDefault(); }, { passive: false });
+            canvas.addEventListener('touchmove', (e) => { pointerMove(e); e.preventDefault(); }, { passive: false });
+            canvas.addEventListener('touchend', (e) => { pointerUp(); e.preventDefault(); }, { passive: false });
+
+            function gameLoop() {
+                if (gameRunning) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Render lines
+                    connections.forEach(c => {
+                        const from = nodes.find(n => n.id === c.from);
+                        const to = nodes.find(n => n.id === c.to);
+                        if (from && to) {
+                            ctx.beginPath();
+                            ctx.moveTo(from.x, from.y);
+                            ctx.lineTo(to.x, to.y);
+                            ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+                            ctx.lineWidth = 3;
+                            ctx.stroke();
+                        }
+                    });
+
+                    // Drag line
+                    if (activeDragNode) {
+                        ctx.beginPath();
+                        ctx.moveTo(activeDragNode.x, activeDragNode.y);
+                        ctx.lineTo(currentMousePos.x, currentMousePos.y);
+                        ctx.strokeStyle = 'rgba(34, 211, 238, 0.5)';
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([5, 5]);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+
+                    // Render node physics
+                    nodes.forEach(node => {
+                        node.pulse += 0.04;
+                        node.x += node.vx;
+                        node.y += node.vy;
+
+                        if (node.x < 15 || node.x > canvas.width - 15) node.vx *= -1;
+                        if (node.y < 15 || node.y > canvas.height - 15) node.vy *= -1;
+
+                        const pulseRadius = node.radius + Math.sin(node.pulse) * 2;
+
+                        if (node.linked) {
+                            ctx.beginPath();
+                            ctx.arc(node.x, node.y, pulseRadius + 8, 0, Math.PI * 2);
+                            ctx.fillStyle = 'rgba(14, 165, 233, 0.15)';
+                            ctx.fill();
+                        }
+
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, pulseRadius, 0, Math.PI * 2);
+                        ctx.fillStyle = node.color;
+                        ctx.fill();
+                    });
+                }
+                requestAnimationFrame(gameLoop);
+            }
+            gameLoop();
         }
         
         handleRouting();
